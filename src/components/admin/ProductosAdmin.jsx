@@ -93,7 +93,7 @@ export default function ProductosAdmin({ onUpdate }) {
     const handleAddSpec = () => {
         setFormData(prev => ({
             ...prev,
-            especificaciones: [...(prev.especificaciones || []), { clave: '', valor: '' }]
+            especificaciones: [...(prev.especificaciones || []), { label: '', value: '' }]
         }));
     };
 
@@ -522,15 +522,15 @@ export default function ProductosAdmin({ onUpdate }) {
                                                 <div key={index} className="flex gap-2 items-center">
                                                     <input
                                                         type="text"
-                                                        value={spec.clave}
-                                                        onChange={(e) => handleUpdateSpec(index, 'clave', e.target.value)}
+                                                        value={spec.label}
+                                                        onChange={(e) => handleUpdateSpec(index, 'label', e.target.value)}
                                                         placeholder="Ej: Procesador, RAM, Almacenamiento"
                                                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
                                                     />
                                                     <input
                                                         type="text"
-                                                        value={spec.valor}
-                                                        onChange={(e) => handleUpdateSpec(index, 'valor', e.target.value)}
+                                                        value={spec.value}
+                                                        onChange={(e) => handleUpdateSpec(index, 'value', e.target.value)}
                                                         placeholder="Ej: Intel i7, 16GB, 512GB SSD"
                                                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
                                                     />
