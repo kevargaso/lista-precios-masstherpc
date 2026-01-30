@@ -439,7 +439,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
 
                         {/* Thumbnails a la izquierda */}
                         {lightbox.images.length > 1 && (
-                            <div className="hidden md:flex flex-col justify-start pt-12 gap-3 p-2 overflow-y-auto overflow-x-hidden w-24 flex-shrink-0">
+                            <div className="hidden md:flex flex-col justify-start pt-4 gap-3 p-2 overflow-y-auto overflow-x-hidden w-20 flex-shrink-0">
                                 {lightbox.images.map((img, idx) => (
                                     <button
                                         key={img.id || idx}
@@ -460,7 +460,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                         )}
 
                         {/* Imagen Principal */}
-                        <div className="flex-1 flex items-center justify-center relative p-4 md:px-20">
+                        <div className="flex-1 flex items-center justify-center relative p-4 md:px-12">
                             {/* Flecha Izquierda */}
                             {lightbox.images.length > 1 && (
                                 <button
