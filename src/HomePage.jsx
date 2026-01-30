@@ -12,7 +12,7 @@ export default function HomePage() {
 
                 {/* Título */}
                 <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-                    MassTheRPC
+                    MesstherPC
                 </h1>
 
                 {/* Subtítulo */}
@@ -40,7 +40,7 @@ export default function HomePage() {
 
                 {/* Footer mínimo */}
                 <div className="mt-16 text-gray-500 text-sm">
-                    <p>© 2026 MassTheRPC - Todos los derechos reservados</p>
+                    <p>© 2026 MesstherPC - Todos los derechos reservados</p>
                 </div>
             </div>
         </div>
