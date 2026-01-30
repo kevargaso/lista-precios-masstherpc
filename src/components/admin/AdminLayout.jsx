@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { authApi, productosApi, categoriasApi } from '../../lib/supabase';
 import ProductosAdmin from './ProductosAdmin';
 import CategoriasAdmin from './CategoriasAdmin';
+import ConsolidadoAdmin from './ConsolidadoAdmin';
 
 export default function AdminLayout({ user, onLogout }) {
     const [activeTab, setActiveTab] = useState('productos');
@@ -38,7 +39,8 @@ export default function AdminLayout({ user, onLogout }) {
     const tabs = [
         { id: 'dashboard', label: 'Dashboard', icon: '📊' },
         { id: 'productos', label: 'Productos', icon: '📦' },
-        { id: 'categorias', label: 'Categorías', icon: '🏷️' }
+        { id: 'categorias', label: 'Categorías', icon: '🏷️' },
+        { id: 'consolidado', label: 'Consolidado', icon: '📋' }
     ];
 
     return (
@@ -80,8 +82,8 @@ export default function AdminLayout({ user, onLogout }) {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${activeTab === tab.id
-                                    ? 'bg-blue-600 text-white'
-                                    : 'text-gray-600 hover:bg-gray-100'
+                                ? 'bg-blue-600 text-white'
+                                : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                         >
                             <span>{tab.icon}</span>
@@ -174,6 +176,11 @@ export default function AdminLayout({ user, onLogout }) {
                 {/* Categorías Tab */}
                 {activeTab === 'categorias' && (
                     <CategoriasAdmin onUpdate={loadStats} />
+                )}
+
+                {/* Consolidado Tab */}
+                {activeTab === 'consolidado' && (
+                    <ConsolidadoAdmin />
                 )}
             </div>
         </div>

@@ -221,3 +221,103 @@ export const authApi = {
         return supabase.auth.onAuthStateChange(callback);
     }
 };
+
+// Funciones para galería de imágenes
+export const galeriaApi = {
+    // Obtener imágenes de un producto
+    async getByProducto(productoId) {
+        if (!supabase) return { data: [], error: null };
+
+        const { data, error } = await supabase
+            .from('producto_imagenes')
+            .select('*')
+            .eq('producto_id', productoId)
+            .order('es_principal', { ascending: false })
+            .order('orden', { ascending: true });
+
+        return { data, error };
+    },
+
+    // Subir imagen
+    async uploadImage(productoId, file) {
+        if (!supabase) return { data: null, error: 'No configurado' };
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${productoId}/${Date.now()}.${fileExt}`;
+
+        // Subir a storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('productos')
+            .upload(fileName, file);
+
+        if (uploadError) return { data: null, error: uploadError };
+
+        // Obtener URL pública
+        const { data: urlData } = supabase.storage
+            .from('productos')
+            .getPublicUrl(fileName);
+
+        // Guardar en tabla de imágenes
+        const { data, error } = await supabase
+            .from('producto_imagenes')
+            .insert([{
+                producto_id: productoId,
+                url: urlData.publicUrl,
+                es_principal: false,
+                orden: 0
+            }])
+            .select()
+            .single();
+
+        return { data, error };
+    },
+
+    // Establecer imagen principal
+    async setPrincipal(imagenId) {
+        if (!supabase) return { error: 'No configurado' };
+
+        const { data, error } = await supabase
+            .from('producto_imagenes')
+            .update({ es_principal: true })
+            .eq('id', imagenId)
+            .select()
+            .single();
+
+        return { data, error };
+    },
+
+    // Eliminar imagen
+    async deleteImage(imageId, imageUrl) {
+        if (!supabase) return { error: 'No configurado' };
+
+        // Extraer path del storage
+        const bucketUrl = supabase.storage.from('productos').getPublicUrl('').data.publicUrl;
+        const filePath = imageUrl.replace(bucketUrl, '');
+
+        // Eliminar de storage
+        await supabase.storage.from('productos').remove([filePath]);
+
+        // Eliminar de tabla
+        const { error } = await supabase
+            .from('producto_imagenes')
+            .delete()
+            .eq('id', imageId);
+
+        return { error };
+    },
+
+    // Obtener imagen principal de un producto
+    async getPrincipal(productoId) {
+        if (!supabase) return { data: null, error: null };
+
+        const { data, error } = await supabase
+            .from('producto_imagenes')
+            .select('*')
+            .eq('producto_id', productoId)
+            .eq('es_principal', true)
+            .single();
+
+        return { data, error };
+    }
+};
+
