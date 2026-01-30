@@ -5,9 +5,29 @@
 /* ============================================
    🎮 GAMER DESIGN SYSTEM
    Premium Gaming Aesthetic with Neon Effects
+   Scoped to .gamer-theme class only
    ============================================ */
 
+/* Default light theme for non-gamer pages (admin) */
 :root {
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #1f2937;
+  /* gray-800 */
+  background-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #f3f4f6;
+  /* gray-100 */
+}
+
+/* Gamer Theme Variables - Scoped to .gamer-theme */
+.gamer-theme {
   /* Background Colors */
   --gamer-bg-dark: #0a0a0f;
   --gamer-bg-darker: #050508;
@@ -46,19 +66,11 @@
   --gamer-shadow-magenta: 0 0 20px rgba(255, 0, 255, 0.3), 0 0 40px rgba(255, 0, 255, 0.1);
   --gamer-shadow-violet: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1);
 
-  /* Typography */
+  /* Apply dark theme within .gamer-theme */
   font-family: 'Rajdhani', 'Inter', system-ui, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
   color: var(--gamer-text-primary);
   background-color: var(--gamer-bg-dark);
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
   min-height: 100vh;
-  background: var(--gamer-bg-dark);
 }
 
 /* ============================================

@@ -13,7 +13,7 @@ const PublicApp = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gamer-dark">
+        <div className="gamer-theme min-h-screen bg-gamer-dark">
             <ListadoPrecios formatCurrency={formatCurrency} TRM={TRM} />
         </div>
     );
