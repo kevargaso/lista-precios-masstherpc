@@ -439,7 +439,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
 
                         {/* Thumbnails a la izquierda */}
                         {lightbox.images.length > 1 && (
-                            <div className="hidden md:flex flex-col gap-2 p-4 overflow-y-auto w-20 flex-shrink-0">
+                            <div className="hidden md:flex flex-col gap-2 p-2 overflow-y-auto overflow-x-hidden w-20 flex-shrink-0">
                                 {lightbox.images.map((img, idx) => (
                                     <button
                                         key={img.id || idx}
