@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Producto - Intel Core Ultra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trigger-btn {
+            padding: 16px 32px;
+            background: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .trigger-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            max-width: 1200px;
+            width: 90%;
+            max-height: 90vh;
+            display: flex;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .sidebar {
+            width: 100px;
+            background: #f8f9fa;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .thumb {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .thumb:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .thumb.active {
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #495057;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .close-btn:hover {
+            background: #fff;
+            transform: rotate(90deg);
+            color: #e74c3c;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .image-viewer {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-viewer::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.03) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .main-image {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.2));
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .main-image.zoomed {
+            transform: scale(1.5);
+            cursor: zoom-out;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #495057;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 5;
+        }
+
+        .nav-btn:hover {
+            background: #fff;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+            color: #667eea;
+        }
+
+        .nav-btn.prev { left: 20px; }
+        .nav-btn.next { right: 20px; }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .product-info {
+            padding: 24px 40px;
+            background: #fff;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .info-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .product-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #212529;
+            letter-spacing: -0.5px;
+        }
+
+        .product-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .counter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .counter-current {
+            color: #667eea;
+            font-size: 20px;
+        }
+
+        .counter-total {
+            color: #adb5bd;
+        }
+
+        .zoom-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .image-viewer:hover .zoom-hint {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .modal-container {
+                width: 95%;
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                padding: 15px;
+                justify-content: center;
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .image-viewer {
+                padding: 20px;
+            }
+
+            .main-image {
+                max-height: 300px;
+            }
+
+            .nav-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+            }
+
+            .product-info {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <button class="trigger-btn" onclick="openModal()">Ver Producto</button>
+
+    <div class="modal-overlay" id="modal" onclick="closeModalOnOverlay(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="sidebar">
+                <div class="thumb active" onclick="changeImage(0)">
+                    <img src="https://http2.mlstatic.com/D_NQ_NP_2X_892640-MLA79338875779_092024-F.webp" alt="Vista frontal">
+                </div>
+                <div class="thumb" onclick="changeImage(1)">
+                    <img src="https://http2.mlstatic.com/D_NQ_NP_2X_648640-MLA79338875780_092024-F.webp" alt="Vista lateral">
+                </div>
+            </div>
+
+            <div class="main-content">
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+                
+                <div class="image-viewer">
+                    <button class="nav-btn prev" onclick="prevImage()" id="prevBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    
+                    <img src="https://http2.mlstatic.com/D_NQ_NP_2X_892640-MLA79338875779_092024-F.webp" 
+                         alt="Intel Core Ultra 7 265K" 
+                         class="main-image" 
+                         id="mainImage"
+                         onclick="toggleZoom()">
+                    
+                    <button class="nav-btn next" onclick="nextImage()" id="nextBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+
+                    <div class="zoom-hint">Click para zoom</div>
+                </div>
+
+                <div class="product-info">
+                    <div class="info-left">
+                        <h2 class="product-title">Intel Core Ultra 7 265K</h2>
+                        <div class="product-meta">
+                            <span class="badge">UNLOCKED</span>
+                            <span>Series 2</span>
+                            <span>•</span>
+                            <span>LGA1851</span>
+                        </div>
+                    </div>
+                    <div class="counter">
+                        <span class="counter-current" id="currentNum">1</span>
+                        <span>/</span>
+                        <span class="counter-total" id="totalNum">2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const images = [
+            'https://http2.mlstatic.com/D_NQ_NP_2X_892640-MLA79338875779_092024-F.webp',
+            'https://http2.mlstatic.com/D_NQ_NP_2X_648640-MLA79338875780_092024-F.webp'
+        ];
+
+        let currentIndex = 0;
+        let isZoomed = false;
+
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            updateUI();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.body.style.overflow = '';
+            if (isZoomed) toggleZoom();
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target === event.currentTarget) {
+                closeModal();
+            }
+        }
+
+        function changeImage(index) {
+            currentIndex = index;
+            const mainImage = document.getElementById('mainImage');
+            
+            mainImage.style.opacity = '0';
+            mainImage.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                mainImage.src = images[currentIndex];
+                mainImage.style.opacity = '1';
+                mainImage.style.transform = 'scale(1)';
+            }, 200);
+
+            updateUI();
+        }
+
+        function nextImage() {
+            if (currentIndex < images.length - 1) {
+                changeImage(currentIndex + 1);
+            }
+        }
+
+        function prevImage() {
+            if (currentIndex > 0) {
+                changeImage(currentIndex - 1);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            document.getElementById('totalNum').textContent = images.length;
+            
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === images.length - 1;
+
+            document.querySelectorAll('.thumb').forEach((thumb, index) => {
+                thumb.classList.toggle('active', index === currentIndex);
+            });
+        }
+
+        function toggleZoom() {
+            const mainImage = document.getElementById('mainImage');
+            isZoomed = !isZoomed;
+            mainImage.classList.toggle('zoomed', isZoomed);
+            document.querySelector('.zoom-hint').textContent = isZoomed ? 'Click para salir' : 'Click para zoom';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('modal').classList.contains('active')) return;
+            
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'ArrowRight') nextImage();
+        });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.querySelector('.image-viewer').addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.querySelector('.image-viewer').addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) nextImage();
+            if (touchEndX > touchStartX + 50) prevImage();
+        }
+    </script>
+</body>
+</html>
