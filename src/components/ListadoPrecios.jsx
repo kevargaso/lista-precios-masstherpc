@@ -427,40 +427,45 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                     className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
                     onClick={() => setLightbox(null)}
                 >
-                    <div className="relative w-full max-w-5xl h-full max-h-[90vh] flex" onClick={e => e.stopPropagation()}>
+                    <div className="relative w-full max-w-6xl h-full max-h-[85vh] flex bg-black rounded-xl overflow-hidden shadow-2xl border border-zinc-800" onClick={e => e.stopPropagation()}>
 
-                        {/* Botón Cerrar */}
-                        <button
-                            onClick={() => setLightbox(null)}
-                            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white text-2xl transition-colors"
-                        >
-                            ✕
-                        </button>
 
-                        {/* Thumbnails a la izquierda */}
+
+                        {/* 1. Columna Thumbnails (Izquierda) */}
                         {lightbox.images.length > 1 && (
-                            <div className="hidden md:flex flex-col justify-start pt-4 gap-3 p-2 overflow-y-auto overflow-x-hidden w-20 flex-shrink-0">
-                                {lightbox.images.map((img, idx) => (
-                                    <button
-                                        key={img.id || idx}
-                                        onClick={() => setLightbox({ ...lightbox, currentIndex: idx })}
-                                        className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === lightbox.currentIndex
-                                            ? 'border-blue-500 ring-2 ring-blue-300'
-                                            : 'border-white/30 hover:border-white'
-                                            }`}
-                                    >
-                                        <img
-                                            src={img.url}
-                                            alt=""
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </button>
-                                ))}
+                            <div className="hidden md:flex flex-col w-20 h-full border-r border-zinc-800 bg-zinc-900/50">
+                                <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-2 custom-scrollbar">
+                                    {lightbox.images.map((img, idx) => (
+                                        <button
+                                            key={img.id || idx}
+                                            onClick={() => setLightbox({ ...lightbox, currentIndex: idx })}
+                                            className={`w-16 h-16 rounded-md overflow-hidden transition-all flex-shrink-0 relative group ${idx === lightbox.currentIndex
+                                                ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-zinc-900 opacity-100'
+                                                : 'opacity-60 hover:opacity-100 ring-1 ring-white/10'
+                                                }`}
+                                        >
+                                            <img
+                                                src={img.url}
+                                                alt=""
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
 
-                        {/* Ramen Principal */}
-                        <div className="flex-1 flex items-center justify-center relative p-0 pr-4">
+                        {/* 2. Contenedor Principal Imagen (Derecha) - Ocupa el resto */}
+                        <div className="flex-1 relative h-full bg-black flex items-center justify-center">
+
+                            {/* Botón Cerrar - Esquina superior derecha ABSOLUTA del contenedor de imagen */}
+                            <button
+                                onClick={() => setLightbox(null)}
+                                className="absolute top-4 right-4 z-50 w-10 h-10 bg-zinc-800/50 hover:bg-zinc-700 rounded-full flex items-center justify-center text-white text-xl transition-colors backdrop-blur-md border border-white/10"
+                            >
+                                ✕
+                            </button>
+
                             {/* Flecha Izquierda */}
                             {lightbox.images.length > 1 && (
                                 <button
@@ -468,17 +473,20 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                         ...lightbox,
                                         currentIndex: lightbox.currentIndex === 0 ? lightbox.images.length - 1 : lightbox.currentIndex - 1
                                     })}
-                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/80 hover:bg-white text-blue-600 hover:text-blue-700 rounded-full flex items-center justify-center text-3xl transition-all z-20 shadow-lg border border-gray-100"
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/50 text-white hover:text-blue-400 transition-all z-30"
                                 >
-                                    ‹
+                                    <span className="text-4xl pb-1">‹</span>
                                 </button>
                             )}
 
-                            <img
-                                src={lightbox.images[lightbox.currentIndex]?.url}
-                                alt={lightbox.productName}
-                                className="max-w-full max-h-full object-contain rounded-lg"
-                            />
+                            {/* IMAGEN - Centrada al 100% */}
+                            <div className="w-full h-full p-0 flex items-center justify-center">
+                                <img
+                                    src={lightbox.images[lightbox.currentIndex]?.url}
+                                    alt={lightbox.productName}
+                                    className="max-w-full max-h-full object-contain"
+                                />
+                            </div>
 
                             {/* Flecha Derecha */}
                             {lightbox.images.length > 1 && (
@@ -487,38 +495,40 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                         ...lightbox,
                                         currentIndex: lightbox.currentIndex === lightbox.images.length - 1 ? 0 : lightbox.currentIndex + 1
                                     })}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/80 hover:bg-white text-blue-600 hover:text-blue-700 rounded-full flex items-center justify-center text-3xl transition-all z-20 shadow-lg border border-gray-100"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/50 text-white hover:text-blue-400 transition-all z-30"
                                 >
-                                    ›
+                                    <span className="text-4xl pb-1">›</span>
                                 </button>
                             )}
 
-                            {/* Nombre del producto */}
-                            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-black/70 text-white px-6 py-2 rounded-full text-center whitespace-nowrap z-20 backdrop-blur-sm border border-white/10 shadow-xl">
-                                <p className="font-bold text-lg">{lightbox.productName}</p>
+                            {/* Label Flotante Inferior */}
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-zinc-900/90 backdrop-blur text-white rounded-full text-sm border border-white/10 flex flex-col items-center gap-0.5 z-40 shadow-xl">
+                                <span className="font-medium whitespace-nowrap">{lightbox.productName}</span>
                                 {lightbox.images.length > 1 && (
-                                    <p className="text-xs text-gray-300 mt-0.5">
+                                    <span className="text-xs text-zinc-400">
                                         {lightbox.currentIndex + 1} / {lightbox.images.length}
-                                    </p>
+                                    </span>
                                 )}
                             </div>
                         </div>
 
-                        {/* Thumbnails en móvil (horizontal abajo) */}
+                        {/* Thumbnails en Móvil (Bottom) */}
                         {lightbox.images.length > 1 && (
-                            <div className="md:hidden absolute bottom-20 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto">
-                                {lightbox.images.map((img, idx) => (
-                                    <button
-                                        key={img.id || idx}
-                                        onClick={() => setLightbox({ ...lightbox, currentIndex: idx })}
-                                        className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === lightbox.currentIndex
-                                            ? 'border-blue-500'
-                                            : 'border-white/30'
-                                            }`}
-                                    >
-                                        <img src={img.url} alt="" className="w-full h-full object-cover" />
-                                    </button>
-                                ))}
+                            <div className="md:hidden absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black via-black/90 to-transparent flex items-end justify-center pb-6 px-4 overflow-x-auto z-50">
+                                <div className="flex gap-2">
+                                    {lightbox.images.map((img, idx) => (
+                                        <button
+                                            key={img.id || idx}
+                                            onClick={() => setLightbox({ ...lightbox, currentIndex: idx })}
+                                            className={`w-14 h-14 rounded-lg overflow-hidden border ${idx === lightbox.currentIndex
+                                                    ? 'border-blue-500 opacity-100 shadow-lg shadow-blue-500/20'
+                                                    : 'border-white/20 opacity-60'
+                                                }`}
+                                        >
+                                            <img src={img.url} alt="" className="w-full h-full object-cover" />
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
