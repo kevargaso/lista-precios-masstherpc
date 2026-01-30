@@ -283,17 +283,33 @@ export const galeriaApi = {
             .from('productos')
             .getPublicUrl(fileName);
 
+        // Verificar si es la primera imagen (será principal automáticamente)
+        const { data: existingImages } = await supabase
+            .from('producto_imagenes')
+            .select('id')
+            .eq('producto_id', productoId);
+
+        const isFirstImage = !existingImages || existingImages.length === 0;
+
         // Guardar en tabla de imágenes
         const { data, error } = await supabase
             .from('producto_imagenes')
             .insert([{
                 producto_id: productoId,
                 url: urlData.publicUrl,
-                es_principal: false,
+                es_principal: isFirstImage,
                 orden: 0
             }])
             .select()
             .single();
+
+        // Si es la primera imagen, actualizar imagen_url del producto
+        if (isFirstImage && !error) {
+            await supabase
+                .from('productos')
+                .update({ imagen_url: urlData.publicUrl })
+                .eq('id', productoId);
+        }
 
         return { data, error };
     },
@@ -302,12 +318,30 @@ export const galeriaApi = {
     async setPrincipal(imagenId) {
         if (!supabase) return { error: 'No configurado' };
 
+        // Obtener la imagen para saber el producto_id y URL
+        const { data: imagen } = await supabase
+            .from('producto_imagenes')
+            .select('producto_id, url')
+            .eq('id', imagenId)
+            .single();
+
+        if (!imagen) return { error: 'Imagen no encontrada' };
+
+        // Actualizar la imagen como principal
         const { data, error } = await supabase
             .from('producto_imagenes')
             .update({ es_principal: true })
             .eq('id', imagenId)
             .select()
             .single();
+
+        // Actualizar imagen_url del producto
+        if (!error) {
+            await supabase
+                .from('productos')
+                .update({ imagen_url: imagen.url })
+                .eq('id', imagen.producto_id);
+        }
 
         return { data, error };
     },
