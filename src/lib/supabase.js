@@ -99,6 +99,30 @@ export const productosApi = {
             .order('orden', { ascending: true });
 
         return { data, error };
+    },
+
+    // Activar producto (revertir soft delete)
+    async activate(id) {
+        return this.update(id, { activo: true });
+    },
+
+    // Eliminar producto permanentemente (hard delete)
+    async hardDelete(id) {
+        if (!supabase) return { data: null, error: 'No configurado' };
+
+        // Primero eliminar imágenes de galería asociadas
+        await supabase
+            .from('galeria_productos')
+            .delete()
+            .eq('producto_id', id);
+
+        // Luego eliminar el producto
+        const { data, error } = await supabase
+            .from('productos')
+            .delete()
+            .eq('id', id);
+
+        return { data, error };
     }
 };
 

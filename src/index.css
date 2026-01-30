@@ -1,38 +1,619 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @import "tailwindcss";
 
+/* ============================================
+   🎮 GAMER DESIGN SYSTEM
+   Premium Gaming Aesthetic with Neon Effects
+   ============================================ */
+
 :root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Background Colors */
+  --gamer-bg-dark: #0a0a0f;
+  --gamer-bg-darker: #050508;
+  --gamer-bg-card: #12121a;
+  --gamer-bg-elevated: #1a1a2e;
+  --gamer-bg-surface: #16161f;
+
+  /* Neon Accent Colors */
+  --gamer-neon-cyan: #00fff7;
+  --gamer-neon-magenta: #ff00ff;
+  --gamer-neon-violet: #8b5cf6;
+  --gamer-neon-purple: #a855f7;
+  --gamer-neon-green: #39ff14;
+  --gamer-neon-orange: #ff6b00;
+  --gamer-neon-red: #ff0040;
+  --gamer-neon-blue: #00a8ff;
+  --gamer-neon-yellow: #ffff00;
+
+  /* Text Colors */
+  --gamer-text-primary: #ffffff;
+  --gamer-text-secondary: #a0a0b0;
+  --gamer-text-muted: #6b6b7b;
+
+  /* Border Colors */
+  --gamer-border: #2a2a40;
+  --gamer-border-glow: #3a3a50;
+
+  /* Gradients */
+  --gamer-gradient-primary: linear-gradient(135deg, #00fff7 0%, #8b5cf6 50%, #ff00ff 100%);
+  --gamer-gradient-fire: linear-gradient(135deg, #ff6b00 0%, #ff0040 50%, #ff00ff 100%);
+  --gamer-gradient-cyber: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #12121a 100%);
+  --gamer-gradient-card: linear-gradient(145deg, rgba(18, 18, 26, 0.9) 0%, rgba(26, 26, 46, 0.7) 100%);
+
+  /* Shadows */
+  --gamer-shadow-cyan: 0 0 20px rgba(0, 255, 247, 0.3), 0 0 40px rgba(0, 255, 247, 0.1);
+  --gamer-shadow-magenta: 0 0 20px rgba(255, 0, 255, 0.3), 0 0 40px rgba(255, 0, 255, 0.1);
+  --gamer-shadow-violet: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1);
+
+  /* Typography */
+  font-family: 'Rajdhani', 'Inter', system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #1f2937;
-  /* Gray-800 for better readability */
-  background-color: #f3f4f6;
-  /* Gray-100 background for the app canvas */
+  color: var(--gamer-text-primary);
+  background-color: var(--gamer-bg-dark);
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--gamer-bg-dark);
 }
 
-/* Custom scrollbar for a cleaner look */
+/* ============================================
+   🎮 GAMER ANIMATIONS
+   ============================================ */
+
+@keyframes neon-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1) drop-shadow(0 0 5px currentColor);
+  }
+
+  50% {
+    opacity: 0.8;
+    filter: brightness(1.2) drop-shadow(0 0 20px currentColor);
+  }
+}
+
+@keyframes glow-border {
+
+  0%,
+  100% {
+    border-color: var(--gamer-neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 255, 247, 0.3);
+  }
+
+  33% {
+    border-color: var(--gamer-neon-violet);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+  }
+
+  66% {
+    border-color: var(--gamer-neon-magenta);
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes gradient-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float-subtle {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes glitch-text {
+
+  0%,
+  100% {
+    text-shadow: 2px 0 var(--gamer-neon-cyan), -2px 0 var(--gamer-neon-magenta);
+    transform: translate(0);
+  }
+
+  20% {
+    text-shadow: -2px 0 var(--gamer-neon-cyan), 2px 0 var(--gamer-neon-magenta);
+    transform: translate(-2px, 1px);
+  }
+
+  40% {
+    text-shadow: 2px 0 var(--gamer-neon-magenta), -2px 0 var(--gamer-neon-cyan);
+    transform: translate(2px, -1px);
+  }
+
+  60% {
+    text-shadow: -1px 0 var(--gamer-neon-cyan), 1px 0 var(--gamer-neon-magenta);
+    transform: translate(1px, 1px);
+  }
+
+  80% {
+    text-shadow: 1px 0 var(--gamer-neon-magenta), -1px 0 var(--gamer-neon-cyan);
+    transform: translate(-1px, -1px);
+  }
+}
+
+@keyframes led-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes fire-glow {
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 10px #ff6b00) drop-shadow(0 0 20px #ff0040);
+  }
+
+  50% {
+    filter: drop-shadow(0 0 20px #ff6b00) drop-shadow(0 0 40px #ff0040);
+  }
+}
+
+@keyframes cyber-grid {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+@keyframes shimmer-gamer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes heartbeat-glow {
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px currentColor);
+  }
+}
+
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   🎮 GAMER UTILITY CLASSES
+   ============================================ */
+
+/* Backgrounds */
+.bg-gamer-dark {
+  background-color: var(--gamer-bg-dark);
+}
+
+.bg-gamer-card {
+  background-color: var(--gamer-bg-card);
+}
+
+.bg-gamer-elevated {
+  background-color: var(--gamer-bg-elevated);
+}
+
+.bg-gamer-surface {
+  background-color: var(--gamer-bg-surface);
+}
+
+/* Grid Background Pattern */
+.bg-cyber-grid {
+  background-image:
+    linear-gradient(rgba(0, 255, 247, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 247, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: cyber-grid 20s linear infinite;
+}
+
+/* Glassmorphism */
+.glass-dark {
+  background: rgba(18, 18, 26, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-gamer {
+  background: linear-gradient(145deg, rgba(18, 18, 26, 0.9) 0%, rgba(26, 26, 46, 0.7) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 255, 247, 0.1);
+}
+
+/* Text Styles */
+.text-gamer-primary {
+  color: var(--gamer-text-primary);
+}
+
+.text-gamer-secondary {
+  color: var(--gamer-text-secondary);
+}
+
+.text-gamer-muted {
+  color: var(--gamer-text-muted);
+}
+
+.text-neon-cyan {
+  color: var(--gamer-neon-cyan);
+}
+
+.text-neon-magenta {
+  color: var(--gamer-neon-magenta);
+}
+
+.text-neon-violet {
+  color: var(--gamer-neon-violet);
+}
+
+.text-neon-green {
+  color: var(--gamer-neon-green);
+}
+
+.text-neon-orange {
+  color: var(--gamer-neon-orange);
+}
+
+.font-gaming {
+  font-family: 'Orbitron', monospace;
+}
+
+.font-gaming-alt {
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* Gradient Text */
+.text-gradient-gamer {
+  background: var(--gamer-gradient-primary);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease infinite;
+}
+
+.text-gradient-fire {
+  background: var(--gamer-gradient-fire);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Glow Effects */
+.glow-cyan {
+  box-shadow: var(--gamer-shadow-cyan);
+  border-color: var(--gamer-neon-cyan);
+}
+
+.glow-magenta {
+  box-shadow: var(--gamer-shadow-magenta);
+  border-color: var(--gamer-neon-magenta);
+}
+
+.glow-violet {
+  box-shadow: var(--gamer-shadow-violet);
+  border-color: var(--gamer-neon-violet);
+}
+
+.glow-text-cyan {
+  text-shadow: 0 0 10px var(--gamer-neon-cyan), 0 0 20px var(--gamer-neon-cyan), 0 0 40px var(--gamer-neon-cyan);
+}
+
+.glow-text-magenta {
+  text-shadow: 0 0 10px var(--gamer-neon-magenta), 0 0 20px var(--gamer-neon-magenta), 0 0 40px var(--gamer-neon-magenta);
+}
+
+/* Borders */
+.border-gamer {
+  border-color: var(--gamer-border);
+}
+
+.border-glow-animated {
+  animation: glow-border 3s ease infinite;
+  border-width: 2px;
+}
+
+/* Animation Classes */
+.animate-neon-pulse {
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+.animate-glow-border {
+  animation: glow-border 3s ease infinite;
+}
+
+.animate-float {
+  animation: float-subtle 3s ease-in-out infinite;
+}
+
+.animate-glitch {
+  animation: glitch-text 2s infinite;
+}
+
+.animate-led {
+  animation: led-blink 1s ease-in-out infinite;
+}
+
+.animate-fire {
+  animation: fire-glow 1.5s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer-gamer 3s linear infinite;
+}
+
+.animate-heartbeat {
+  animation: heartbeat-glow 1.5s ease-in-out infinite;
+}
+
+.animate-rotate {
+  animation: rotate-slow 20s linear infinite;
+}
+
+.animate-slide-up {
+  animation: slide-in-up 0.5s ease-out forwards;
+}
+
+/* Hover Effects */
+.hover-glow-cyan:hover {
+  box-shadow: 0 0 30px rgba(0, 255, 247, 0.5), 0 0 60px rgba(0, 255, 247, 0.2);
+  border-color: var(--gamer-neon-cyan);
+  transform: translateY(-2px);
+}
+
+.hover-glow-magenta:hover {
+  box-shadow: 0 0 30px rgba(255, 0, 255, 0.5), 0 0 60px rgba(255, 0, 255, 0.2);
+  border-color: var(--gamer-neon-magenta);
+  transform: translateY(-2px);
+}
+
+/* Card Styles */
+.card-gamer {
+  background: var(--gamer-gradient-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--gamer-border);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.card-gamer:hover {
+  border-color: rgba(0, 255, 247, 0.3);
+  box-shadow: 0 0 30px rgba(0, 255, 247, 0.1);
+}
+
+/* Table Styles */
+.table-gamer {
+  background: var(--gamer-bg-card);
+  border: 1px solid var(--gamer-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-gamer th {
+  background: linear-gradient(135deg, var(--gamer-bg-elevated) 0%, var(--gamer-bg-surface) 100%);
+  border-bottom: 2px solid var(--gamer-neon-cyan);
+  color: var(--gamer-text-primary);
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.table-gamer td {
+  border-bottom: 1px solid var(--gamer-border);
+  color: var(--gamer-text-secondary);
+  transition: all 0.3s ease;
+}
+
+.table-gamer tr:hover td {
+  background: rgba(0, 255, 247, 0.05);
+  color: var(--gamer-text-primary);
+}
+
+/* Button Styles */
+.btn-gamer {
+  background: linear-gradient(135deg, var(--gamer-bg-elevated) 0%, var(--gamer-bg-surface) 100%);
+  border: 1px solid var(--gamer-neon-cyan);
+  color: var(--gamer-neon-cyan);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-gamer:hover {
+  background: var(--gamer-neon-cyan);
+  color: var(--gamer-bg-dark);
+  box-shadow: 0 0 20px rgba(0, 255, 247, 0.5);
+}
+
+/* Badge/Pill Styles */
+.badge-gamer {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.badge-success {
+  background: rgba(57, 255, 20, 0.15);
+  color: var(--gamer-neon-green);
+  border: 1px solid rgba(57, 255, 20, 0.3);
+}
+
+.badge-danger {
+  background: rgba(255, 0, 64, 0.15);
+  color: var(--gamer-neon-red);
+  border: 1px solid rgba(255, 0, 64, 0.3);
+}
+
+.badge-warning {
+  background: rgba(255, 107, 0, 0.15);
+  color: var(--gamer-neon-orange);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+}
+
+.badge-hot {
+  background: linear-gradient(135deg, rgba(255, 0, 64, 0.2) 0%, rgba(255, 0, 255, 0.2) 100%);
+  color: var(--gamer-neon-magenta);
+  border: 1px solid rgba(255, 0, 255, 0.3);
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+/* LED Timer Display */
+.led-display {
+  font-family: 'Orbitron', monospace;
+  background: linear-gradient(180deg, #0a0a0f 0%, #1a0a0f 100%);
+  border: 2px solid var(--gamer-neon-orange);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 107, 0, 0.3);
+}
+
+.led-segment {
+  background: rgba(255, 107, 0, 0.1);
+  border-radius: 4px;
+  padding: 8px 12px;
+  color: var(--gamer-neon-orange);
+  text-shadow: 0 0 10px var(--gamer-neon-orange);
+  animation: led-blink 1s ease-in-out infinite;
+}
+
+/* Corner Accents */
+.corner-accent {
+  position: relative;
+}
+
+.corner-accent::before,
+.corner-accent::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--gamer-neon-cyan);
+}
+
+.corner-accent::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner-accent::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Custom Scrollbar - Gamer Style */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--gamer-bg-dark);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: linear-gradient(180deg, var(--gamer-neon-cyan) 0%, var(--gamer-neon-violet) 100%);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: linear-gradient(180deg, var(--gamer-neon-magenta) 0%, var(--gamer-neon-cyan) 100%);
+}
+
+/* Print Styles */
+@media print {
+  :root {
+    background-color: white;
+    color: black;
+  }
+
+  .bg-gamer-dark,
+  .bg-gamer-card {
+    background: white !important;
+  }
+
+  .text-neon-cyan,
+  .text-neon-magenta,
+  .text-neon-violet {
+    color: black !important;
+  }
 }

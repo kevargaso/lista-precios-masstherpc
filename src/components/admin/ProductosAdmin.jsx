@@ -160,6 +160,24 @@ export default function ProductosAdmin({ onUpdate }) {
         }
     };
 
+    // Activar producto (revertir desactivación)
+    const handleActivate = async (id) => {
+        if (confirm('¿Activar este producto nuevamente?')) {
+            await productosApi.activate(id);
+            loadData();
+            onUpdate?.();
+        }
+    };
+
+    // Eliminar permanentemente
+    const handleHardDelete = async (id, nombre) => {
+        if (confirm(`⚠️ ELIMINAR PERMANENTEMENTE "${nombre}"?\n\nEsta acción NO se puede deshacer. Se eliminará el producto y todas sus imágenes.`)) {
+            await productosApi.hardDelete(id);
+            loadData();
+            onUpdate?.();
+        }
+    };
+
     const handleStockChange = async (id, nuevoStock) => {
         await productosApi.updateStock(id, parseInt(nuevoStock) || 0);
         loadData();
@@ -297,7 +315,8 @@ export default function ProductosAdmin({ onUpdate }) {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 text-center">
-                                    <div className="flex items-center justify-center gap-2">
+                                    <div className="flex items-center justify-center gap-1">
+                                        {/* Editar */}
                                         <button
                                             onClick={() => openEditModal(producto)}
                                             className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -305,10 +324,34 @@ export default function ProductosAdmin({ onUpdate }) {
                                         >
                                             ✏️
                                         </button>
+
+                                        {/* Activar (solo si está inactivo) */}
+                                        {!producto.activo && (
+                                            <button
+                                                onClick={() => handleActivate(producto.id)}
+                                                className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                title="Activar producto"
+                                            >
+                                                ✅
+                                            </button>
+                                        )}
+
+                                        {/* Desactivar (solo si está activo) */}
+                                        {producto.activo && (
+                                            <button
+                                                onClick={() => handleDelete(producto.id)}
+                                                className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                                title="Desactivar"
+                                            >
+                                                ⏸️
+                                            </button>
+                                        )}
+
+                                        {/* Eliminar permanentemente */}
                                         <button
-                                            onClick={() => handleDelete(producto.id)}
+                                            onClick={() => handleHardDelete(producto.id, producto.nombre)}
                                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                            title="Desactivar"
+                                            title="Eliminar permanentemente"
                                         >
                                             🗑️
                                         </button>
