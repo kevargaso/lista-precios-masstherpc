@@ -89,6 +89,30 @@ export default function ProductosAdmin({ onUpdate }) {
         setShowModal(true);
     };
 
+    // Funciones para manejar especificaciones dinámicas
+    const handleAddSpec = () => {
+        setFormData(prev => ({
+            ...prev,
+            especificaciones: [...(prev.especificaciones || []), { clave: '', valor: '' }]
+        }));
+    };
+
+    const handleRemoveSpec = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            especificaciones: prev.especificaciones.filter((_, i) => i !== index)
+        }));
+    };
+
+    const handleUpdateSpec = (index, field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            especificaciones: prev.especificaciones.map((spec, i) =>
+                i === index ? { ...spec, [field]: value } : spec
+            )
+        }));
+    };
+
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file || !editingProduct) return;
@@ -475,6 +499,57 @@ export default function ProductosAdmin({ onUpdate }) {
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                         placeholder="Ej: BLISTER, BLANCA, NEGRO"
                                     />
+                                </div>
+
+                                {/* Especificaciones Dinámicas */}
+                                <div className="md:col-span-2 border-t pt-4 mt-2">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            📋 Especificaciones Técnicas
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={handleAddSpec}
+                                            className="text-sm px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1"
+                                        >
+                                            ➕ Agregar
+                                        </button>
+                                    </div>
+
+                                    {formData.especificaciones && formData.especificaciones.length > 0 ? (
+                                        <div className="space-y-2">
+                                            {formData.especificaciones.map((spec, index) => (
+                                                <div key={index} className="flex gap-2 items-center">
+                                                    <input
+                                                        type="text"
+                                                        value={spec.clave}
+                                                        onChange={(e) => handleUpdateSpec(index, 'clave', e.target.value)}
+                                                        placeholder="Ej: Procesador, RAM, Almacenamiento"
+                                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={spec.valor}
+                                                        onChange={(e) => handleUpdateSpec(index, 'valor', e.target.value)}
+                                                        placeholder="Ej: Intel i7, 16GB, 512GB SSD"
+                                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveSpec(index)}
+                                                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                        title="Eliminar especificación"
+                                                    >
+                                                        🗑️
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-gray-400 italic">
+                                            No hay especificaciones. Haz clic en "Agregar" para añadir una.
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="md:col-span-2">
