@@ -46,7 +46,7 @@ const ProductLightbox = ({ isOpen, images, currentIndex, productName, onClose, o
     const handleTouchEnd = (e) => {
       touchEndX = e.changedTouches[0].screenX;
       const diff = touchStartX - touchEndX;
-      
+
       if (Math.abs(diff) > 50) {
         if (diff > 0) {
           handleNext();
@@ -68,46 +68,21 @@ const ProductLightbox = ({ isOpen, images, currentIndex, productName, onClose, o
   if (!isOpen || !images || images.length === 0) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
       onClick={onClose}
     >
       {/* Contenedor Principal - Simetría Geométrica */}
-      <div 
+      <div
         className="relative flex flex-col md:flex-row w-full max-w-5xl h-[85vh] md:h-[80vh] mx-4"
         onClick={(e) => e.stopPropagation()}
       >
-        
-        {/* Desktop: Miniaturas Verticales (Izquierda) */}
-        {images.length > 1 && (
-          <div className="hidden md:flex flex-col h-full pr-3">
-            <div className="flex flex-col gap-2 h-full overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
-              {images.map((img, idx) => (
-                <button
-                  key={img.id || idx}
-                  onClick={() => onChangeIndex(idx)}
-                  className={`
-                    w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden transition-all duration-200
-                    ${idx === currentIndex 
-                      ? 'ring-2 ring-blue-500 opacity-100' 
-                      : 'opacity-50 hover:opacity-80'
-                    }
-                  `}
-                >
-                  <img
-                    src={img.url}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+
+
 
         {/* Área de Imagen Principal */}
         <div className="flex-1 relative h-full flex items-center justify-center">
-          
+
           {/* Botón Cerrar */}
           <button
             onClick={onClose}
@@ -124,12 +99,12 @@ const ProductLightbox = ({ isOpen, images, currentIndex, productName, onClose, o
               onClick={handlePrev}
               className="absolute left-4 top-1/2 -translate-y-1/2 z-40 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-200 hover:scale-110 group"
             >
-              <svg 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
                 strokeWidth="2.5"
                 className="text-gray-700 group-hover:text-blue-600 transition-colors"
               >
@@ -153,12 +128,12 @@ const ProductLightbox = ({ isOpen, images, currentIndex, productName, onClose, o
               onClick={handleNext}
               className="absolute right-4 top-1/2 -translate-y-1/2 z-40 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-200 hover:scale-110 group"
             >
-              <svg 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
                 strokeWidth="2.5"
                 className="text-gray-700 group-hover:text-blue-600 transition-colors"
               >
@@ -192,8 +167,8 @@ const ProductLightbox = ({ isOpen, images, currentIndex, productName, onClose, o
                   onClick={() => onChangeIndex(idx)}
                   className={`
                     w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden transition-all duration-200
-                    ${idx === currentIndex 
-                      ? 'ring-2 ring-blue-500 opacity-100' 
+                    ${idx === currentIndex
+                      ? 'ring-2 ring-blue-500 opacity-100'
                       : 'opacity-50'
                     }
                   `}
