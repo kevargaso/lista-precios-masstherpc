@@ -152,6 +152,32 @@ export const categoriasApi = {
     }
 };
 
+// Funciones de subcategorías
+export const subcategoriasApi = {
+    async getAll() {
+        if (!supabase) return { data: [], error: null };
+
+        const { data, error } = await supabase
+            .from('subcategorias')
+            .select('*, categoria:categorias(id, nombre)')
+            .order('orden', { ascending: true });
+
+        return { data, error };
+    },
+
+    async getByCategoria(categoriaId) {
+        if (!supabase) return { data: [], error: null };
+
+        const { data, error } = await supabase
+            .from('subcategorias')
+            .select('*')
+            .eq('categoria_id', categoriaId)
+            .order('orden', { ascending: true });
+
+        return { data, error };
+    }
+};
+
 // Funciones de storage para imágenes
 export const storageApi = {
     async uploadImage(file, path) {

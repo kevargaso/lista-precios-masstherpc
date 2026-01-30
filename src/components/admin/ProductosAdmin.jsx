@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { productosApi, categoriasApi, storageApi } from '../../lib/supabase';
+import { productosApi, categoriasApi, subcategoriasApi, galeriaApi } from '../../lib/supabase';
 
 export default function ProductosAdmin({ onUpdate }) {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
+    const [subcategorias, setSubcategorias] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
@@ -22,7 +23,10 @@ export default function ProductosAdmin({ onUpdate }) {
         especificaciones: [],
         activo: true
     });
-    const [imageFile, setImageFile] = useState(null);
+
+    // Gallery state
+    const [productGallery, setProductGallery] = useState([]);
+    const [uploadingImage, setUploadingImage] = useState(false);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -31,15 +35,22 @@ export default function ProductosAdmin({ onUpdate }) {
 
     const loadData = async () => {
         setLoading(true);
-        const [productosRes, categoriasRes] = await Promise.all([
+        const [productosRes, categoriasRes, subcategoriasRes] = await Promise.all([
             productosApi.getAllAdmin(),
-            categoriasApi.getAll()
+            categoriasApi.getAll(),
+            subcategoriasApi.getAll()
         ]);
 
         if (productosRes.data) setProductos(productosRes.data);
         if (categoriasRes.data) setCategorias(categoriasRes.data);
+        if (subcategoriasRes.data) setSubcategorias(subcategoriasRes.data);
         setLoading(false);
     };
+
+    // Filtrar subcategorías por categoría seleccionada
+    const filteredSubcategorias = subcategorias.filter(
+        sub => sub.categoria_id === formData.categoria_id
+    );
 
     const openNewModal = () => {
         setEditingProduct(null);
@@ -54,11 +65,11 @@ export default function ProductosAdmin({ onUpdate }) {
             especificaciones: [],
             activo: true
         });
-        setImageFile(null);
+        setProductGallery([]);
         setShowModal(true);
     };
 
-    const openEditModal = (producto) => {
+    const openEditModal = async (producto) => {
         setEditingProduct(producto);
         setFormData({
             nombre: producto.nombre,
@@ -71,39 +82,68 @@ export default function ProductosAdmin({ onUpdate }) {
             especificaciones: producto.especificaciones || [],
             activo: producto.activo
         });
-        setImageFile(null);
+
+        // Cargar galería del producto
+        const { data: gallery } = await galeriaApi.getByProducto(producto.id);
+        setProductGallery(gallery || []);
         setShowModal(true);
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file || !editingProduct) return;
+
+        setUploadingImage(true);
+        const { data, error } = await galeriaApi.uploadImage(editingProduct.id, file);
+
+        if (!error && data) {
+            setProductGallery(prev => [...prev, data]);
+        } else {
+            alert('Error subiendo imagen: ' + (error?.message || 'Error desconocido'));
+        }
+        setUploadingImage(false);
+        e.target.value = '';
+    };
+
+    const handleSetPrincipal = async (imagenId) => {
+        await galeriaApi.setPrincipal(imagenId);
+        // Actualizar localmente
+        setProductGallery(prev => prev.map(img => ({
+            ...img,
+            es_principal: img.id === imagenId
+        })));
+    };
+
+    const handleDeleteImage = async (imagen) => {
+        if (!confirm('¿Eliminar esta imagen?')) return;
+
+        await galeriaApi.deleteImage(imagen.id, imagen.url);
+        setProductGallery(prev => prev.filter(img => img.id !== imagen.id));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
 
-        let imagen_url = editingProduct?.imagen_url || null;
-
-        // Upload nueva imagen si existe
-        if (imageFile) {
-            const { data: uploadUrl, error } = await storageApi.uploadImage(
-                imageFile,
-                formData.nombre.toLowerCase().replace(/\s+/g, '-')
-            );
-            if (!error && uploadUrl) {
-                imagen_url = uploadUrl;
-            }
-        }
+        // Obtener imagen principal para imagen_url
+        const principalImage = productGallery.find(img => img.es_principal);
 
         const productoData = {
             ...formData,
             precio: parseFloat(formData.precio) || 0,
             stock: parseInt(formData.stock) || 0,
-            imagen_url,
+            imagen_url: principalImage?.url || null,
             categoria_id: formData.categoria_id || null
         };
 
         if (editingProduct) {
             await productosApi.update(editingProduct.id, productoData);
         } else {
-            await productosApi.create(productoData);
+            const { data: newProduct } = await productosApi.create(productoData);
+            // Si es nuevo y no tenía ID, guardarlo para poder subir imágenes
+            if (newProduct) {
+                setEditingProduct(newProduct);
+            }
         }
 
         setSaving(false);
@@ -239,8 +279,8 @@ export default function ProductosAdmin({ onUpdate }) {
                                         value={producto.stock}
                                         onChange={(e) => handleStockChange(producto.id, e.target.value)}
                                         className={`w-20 px-2 py-1 text-center border rounded-lg ${producto.stock === 0 ? 'border-red-300 bg-red-50' :
-                                                producto.stock <= 3 ? 'border-yellow-300 bg-yellow-50' :
-                                                    'border-gray-300'
+                                            producto.stock <= 3 ? 'border-yellow-300 bg-yellow-50' :
+                                                'border-gray-300'
                                             }`}
                                         min="0"
                                     />
@@ -250,8 +290,8 @@ export default function ProductosAdmin({ onUpdate }) {
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${producto.activo
-                                            ? 'bg-green-100 text-green-700'
-                                            : 'bg-red-100 text-red-700'
+                                        ? 'bg-green-100 text-green-700'
+                                        : 'bg-red-100 text-red-700'
                                         }`}>
                                         {producto.activo ? 'Activo' : 'Inactivo'}
                                     </span>
@@ -290,14 +330,15 @@ export default function ProductosAdmin({ onUpdate }) {
             {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
                         <div className="p-6 border-b border-gray-200">
                             <h3 className="text-xl font-bold text-gray-800">
                                 {editingProduct ? 'Editar Producto' : 'Nuevo Producto'}
                             </h3>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                            {/* Datos básicos */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -318,7 +359,7 @@ export default function ProductosAdmin({ onUpdate }) {
                                     </label>
                                     <select
                                         value={formData.categoria_id}
-                                        onChange={(e) => setFormData({ ...formData, categoria_id: e.target.value })}
+                                        onChange={(e) => setFormData({ ...formData, categoria_id: e.target.value, subcategoria: '' })}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                     >
                                         <option value="">Seleccionar...</option>
@@ -334,13 +375,22 @@ export default function ProductosAdmin({ onUpdate }) {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         Subcategoría
                                     </label>
-                                    <input
-                                        type="text"
+                                    <select
                                         value={formData.subcategoria}
                                         onChange={(e) => setFormData({ ...formData, subcategoria: e.target.value })}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                        placeholder="Ej: AMD RYZEN, DDR5, etc."
-                                    />
+                                        disabled={!formData.categoria_id}
+                                    >
+                                        <option value="">Sin subcategoría</option>
+                                        {filteredSubcategorias.map(sub => (
+                                            <option key={sub.id} value={sub.nombre}>
+                                                {sub.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {!formData.categoria_id && (
+                                        <p className="text-xs text-gray-500 mt-1">Selecciona una categoría primero</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -384,30 +434,6 @@ export default function ProductosAdmin({ onUpdate }) {
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Imagen
-                                    </label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => setImageFile(e.target.files[0])}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Descripción
-                                    </label>
-                                    <textarea
-                                        value={formData.descripcion}
-                                        onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                        rows="3"
-                                    />
-                                </div>
-
                                 <div className="md:col-span-2">
                                     <label className="flex items-center gap-2">
                                         <input
@@ -420,6 +446,96 @@ export default function ProductosAdmin({ onUpdate }) {
                                     </label>
                                 </div>
                             </div>
+
+                            {/* Galería de Imágenes */}
+                            {editingProduct && (
+                                <div className="border-t pt-6">
+                                    <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                        🖼️ Galería de Imágenes
+                                        <span className="text-sm font-normal text-gray-500">
+                                            ({productGallery.length} imágenes)
+                                        </span>
+                                    </h4>
+
+                                    {/* Upload */}
+                                    <div className="mb-4">
+                                        <label className="block">
+                                            <span className="sr-only">Subir imagen</span>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                disabled={uploadingImage}
+                                                className="block w-full text-sm text-gray-500
+                                                    file:mr-4 file:py-2 file:px-4
+                                                    file:rounded-lg file:border-0
+                                                    file:text-sm file:font-semibold
+                                                    file:bg-blue-50 file:text-blue-700
+                                                    hover:file:bg-blue-100
+                                                    disabled:opacity-50"
+                                            />
+                                        </label>
+                                        {uploadingImage && (
+                                            <p className="text-sm text-blue-600 mt-2">⏳ Subiendo imagen...</p>
+                                        )}
+                                    </div>
+
+                                    {/* Gallery Grid */}
+                                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+                                        {productGallery.map((imagen) => (
+                                            <div
+                                                key={imagen.id}
+                                                className={`relative group rounded-lg overflow-hidden border-2 ${imagen.es_principal ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
+                                                    }`}
+                                            >
+                                                <img
+                                                    src={imagen.url}
+                                                    alt="Producto"
+                                                    className="w-full h-24 object-cover"
+                                                />
+                                                {imagen.es_principal && (
+                                                    <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-2 py-0.5 rounded">
+                                                        Principal
+                                                    </div>
+                                                )}
+                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                    {!imagen.es_principal && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleSetPrincipal(imagen.id)}
+                                                            className="p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+                                                            title="Establecer como principal"
+                                                        >
+                                                            ⭐
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteImage(imagen)}
+                                                        className="p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600"
+                                                        title="Eliminar"
+                                                    >
+                                                        🗑️
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {productGallery.length === 0 && (
+                                            <div className="col-span-full text-center py-8 text-gray-400 border-2 border-dashed rounded-lg">
+                                                <span className="text-3xl block mb-2">📷</span>
+                                                <p>No hay imágenes. Sube la primera.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {!editingProduct && (
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
+                                    ⚠️ Guarda el producto primero para poder agregar imágenes.
+                                </div>
+                            )}
 
                             <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
                                 <button
