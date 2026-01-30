@@ -439,7 +439,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
 
                         {/* Thumbnails a la izquierda */}
                         {lightbox.images.length > 1 && (
-                            <div className="hidden md:flex flex-col justify-center gap-2 p-2 overflow-y-auto overflow-x-hidden w-20 flex-shrink-0">
+                            <div className="hidden md:flex flex-col justify-start pt-12 gap-3 p-2 overflow-y-auto overflow-x-hidden w-24 flex-shrink-0">
                                 {lightbox.images.map((img, idx) => (
                                     <button
                                         key={img.id || idx}
@@ -460,7 +460,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                         )}
 
                         {/* Imagen Principal */}
-                        <div className="flex-1 flex items-center justify-center relative p-4">
+                        <div className="flex-1 flex items-center justify-center relative p-4 md:px-20">
                             {/* Flecha Izquierda */}
                             {lightbox.images.length > 1 && (
                                 <button
@@ -468,7 +468,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                         ...lightbox,
                                         currentIndex: lightbox.currentIndex === 0 ? lightbox.images.length - 1 : lightbox.currentIndex - 1
                                     })}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-10"
+                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-10"
                                 >
                                     ‹
                                 </button>
@@ -487,17 +487,17 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                         ...lightbox,
                                         currentIndex: lightbox.currentIndex === lightbox.images.length - 1 ? 0 : lightbox.currentIndex + 1
                                     })}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-10"
+                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-10"
                                 >
                                     ›
                                 </button>
                             )}
 
-                            {/* Nombre del producto (MOMIDO AQUÍ DENTRO PARA CENTRAR CON IMAGEN) */}
-                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-lg text-center whitespace-nowrap z-20">
-                                <p className="font-medium">{lightbox.productName}</p>
+                            {/* Nombre del producto */}
+                            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-black/70 text-white px-6 py-2 rounded-full text-center whitespace-nowrap z-20 backdrop-blur-sm border border-white/10 shadow-xl">
+                                <p className="font-bold text-lg">{lightbox.productName}</p>
                                 {lightbox.images.length > 1 && (
-                                    <p className="text-sm text-gray-300 mt-1">
+                                    <p className="text-xs text-gray-300 mt-0.5">
                                         {lightbox.currentIndex + 1} / {lightbox.images.length}
                                     </p>
                                 )}
