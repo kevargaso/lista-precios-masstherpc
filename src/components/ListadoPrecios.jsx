@@ -427,13 +427,13 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                     className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
                     onClick={() => setLightbox(null)}
                 >
-                    <div className="relative w-full max-w-6xl h-full max-h-[85vh] flex bg-black rounded-xl overflow-hidden shadow-2xl border border-zinc-800" onClick={e => e.stopPropagation()}>
+                    <div className="relative w-full max-w-4xl h-full max-h-[85vh] flex rounded-xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
 
 
 
                         {/* 1. Columna Thumbnails (Izquierda) */}
                         {lightbox.images.length > 1 && (
-                            <div className="hidden md:flex flex-col w-20 h-full border-r border-zinc-800 bg-zinc-900/50">
+                            <div className="hidden md:flex flex-col w-20 h-full bg-black/40 backdrop-blur-sm border-r border-white/5">
                                 <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-2 custom-scrollbar">
                                     {lightbox.images.map((img, idx) => (
                                         <button
@@ -521,8 +521,8 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                             key={img.id || idx}
                                             onClick={() => setLightbox({ ...lightbox, currentIndex: idx })}
                                             className={`w-14 h-14 rounded-lg overflow-hidden border ${idx === lightbox.currentIndex
-                                                    ? 'border-blue-500 opacity-100 shadow-lg shadow-blue-500/20'
-                                                    : 'border-white/20 opacity-60'
+                                                ? 'border-blue-500 opacity-100 shadow-lg shadow-blue-500/20'
+                                                : 'border-white/20 opacity-60'
                                                 }`}
                                         >
                                             <img src={img.url} alt="" className="w-full h-full object-cover" />
