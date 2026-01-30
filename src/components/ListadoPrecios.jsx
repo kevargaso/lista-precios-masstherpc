@@ -439,7 +439,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
 
                         {/* Thumbnails a la izquierda */}
                         {lightbox.images.length > 1 && (
-                            <div className="hidden md:flex flex-col gap-2 p-2 overflow-y-auto overflow-x-hidden w-20 flex-shrink-0">
+                            <div className="hidden md:flex flex-col justify-center gap-2 p-2 overflow-y-auto overflow-x-hidden w-20 flex-shrink-0">
                                 {lightbox.images.map((img, idx) => (
                                     <button
                                         key={img.id || idx}
@@ -492,16 +492,16 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                     ›
                                 </button>
                             )}
-                        </div>
 
-                        {/* Nombre del producto */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-lg text-center">
-                            <p className="font-medium">{lightbox.productName}</p>
-                            {lightbox.images.length > 1 && (
-                                <p className="text-sm text-gray-300 mt-1">
-                                    {lightbox.currentIndex + 1} / {lightbox.images.length}
-                                </p>
-                            )}
+                            {/* Nombre del producto (MOMIDO AQUÍ DENTRO PARA CENTRAR CON IMAGEN) */}
+                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-lg text-center whitespace-nowrap z-20">
+                                <p className="font-medium">{lightbox.productName}</p>
+                                {lightbox.images.length > 1 && (
+                                    <p className="text-sm text-gray-300 mt-1">
+                                        {lightbox.currentIndex + 1} / {lightbox.images.length}
+                                    </p>
+                                )}
+                            </div>
                         </div>
 
                         {/* Thumbnails en móvil (horizontal abajo) */}
