@@ -460,7 +460,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                         )}
 
                         {/* Ramen Principal */}
-                        <div className="flex-1 flex items-center justify-center relative p-0">
+                        <div className="flex-1 flex items-center justify-center relative p-0 pr-4">
                             {/* Flecha Izquierda */}
                             {lightbox.images.length > 1 && (
                                 <button
@@ -468,7 +468,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                         ...lightbox,
                                         currentIndex: lightbox.currentIndex === 0 ? lightbox.images.length - 1 : lightbox.currentIndex - 1
                                     })}
-                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/30 hover:bg-black/60 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-20 backdrop-blur-sm shadow-md"
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/80 hover:bg-white text-blue-600 hover:text-blue-700 rounded-full flex items-center justify-center text-3xl transition-all z-20 shadow-lg border border-gray-100"
                                 >
                                     ‹
                                 </button>
@@ -477,7 +477,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                             <img
                                 src={lightbox.images[lightbox.currentIndex]?.url}
                                 alt={lightbox.productName}
-                                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                                className="max-w-full max-h-full object-contain rounded-lg"
                             />
 
                             {/* Flecha Derecha */}
@@ -487,7 +487,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                         ...lightbox,
                                         currentIndex: lightbox.currentIndex === lightbox.images.length - 1 ? 0 : lightbox.currentIndex + 1
                                     })}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/30 hover:bg-black/60 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-20 backdrop-blur-sm shadow-md"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/80 hover:bg-white text-blue-600 hover:text-blue-700 rounded-full flex items-center justify-center text-3xl transition-all z-20 shadow-lg border border-gray-100"
                                 >
                                     ›
                                 </button>
