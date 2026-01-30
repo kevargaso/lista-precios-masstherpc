@@ -427,14 +427,14 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                     className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
                     onClick={() => setLightbox(null)}
                 >
-                    <div className="relative w-full max-w-4xl h-full max-h-[85vh] flex rounded-xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+                    <div className="relative w-full max-w-4xl h-full max-h-[85vh] flex items-center justify-center" onClick={e => e.stopPropagation()}>
 
 
 
                         {/* 1. Columna Thumbnails (Izquierda) */}
                         {lightbox.images.length > 1 && (
-                            <div className="hidden md:flex flex-col w-20 h-full bg-black/40 backdrop-blur-sm border-r border-white/5">
-                                <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-2 custom-scrollbar">
+                            <div className="hidden md:flex flex-col w-20 h-full justify-center gap-4 pr-4">
+                                <div className="flex-col flex gap-2 overflow-y-auto overflow-x-hidden custom-scrollbar max-h-full py-4">
                                     {lightbox.images.map((img, idx) => (
                                         <button
                                             key={img.id || idx}
