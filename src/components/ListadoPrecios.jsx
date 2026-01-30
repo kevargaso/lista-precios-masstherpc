@@ -1,7 +1,7 @@
 // Componente DINÁMICO para mostrar el listado de precios desde Supabase
 // Mantiene el diseño visual original con animaciones
 import React, { useState, useEffect } from 'react';
-import { productosApi, categoriasApi, isSupabaseConfigured } from '../lib/supabase';
+import { productosApi, categoriasApi, galeriaApi, isSupabaseConfigured } from '../lib/supabase';
 
 const ListadoPrecios = ({ formatCurrency, TRM }) => {
     // Estado para datos de Supabase
@@ -14,7 +14,8 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
     const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 47, seconds: 33 });
     const [flash, setFlash] = useState(false);
     const [expandedSpecs, setExpandedSpecs] = useState({});
-    const [lightboxImage, setLightboxImage] = useState(null);
+    // Lightbox con galería: { images: [], currentIndex: 0, productName: '' }
+    const [lightbox, setLightbox] = useState(null);
 
     // Cargar datos de Supabase
     useEffect(() => {
@@ -377,6 +378,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                                                         formatCurrency={formatCurrency}
                                                                         expandedSpecs={expandedSpecs}
                                                                         toggleSpecs={toggleSpecs}
+                                                                        onOpenGallery={setLightbox}
                                                                     />
                                                                 ))}
                                                         </React.Fragment>
@@ -392,6 +394,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                                                 formatCurrency={formatCurrency}
                                                                 expandedSpecs={expandedSpecs}
                                                                 toggleSpecs={toggleSpecs}
+                                                                onOpenGallery={setLightbox}
                                                             />
                                                         ))}
                                                 </>
@@ -406,6 +409,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                                             formatCurrency={formatCurrency}
                                                             expandedSpecs={expandedSpecs}
                                                             toggleSpecs={toggleSpecs}
+                                                            onOpenGallery={setLightbox}
                                                         />
                                                     ))
                                             )}
@@ -417,17 +421,107 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                     })}
             </div>
 
-            {/* Lightbox */}
-            {lightboxImage && (
+            {/* Lightbox con Galería Estilo MercadoLibre */}
+            {lightbox && (
                 <div
-                    className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
-                    onClick={() => setLightboxImage(null)}
+                    className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+                    onClick={() => setLightbox(null)}
                 >
-                    <img
-                        src={lightboxImage.url}
-                        alt={lightboxImage.alt}
-                        className="max-w-full max-h-[90vh] rounded-lg shadow-2xl"
-                    />
+                    <div className="relative w-full max-w-5xl h-full max-h-[90vh] flex" onClick={e => e.stopPropagation()}>
+
+                        {/* Botón Cerrar */}
+                        <button
+                            onClick={() => setLightbox(null)}
+                            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white text-2xl transition-colors"
+                        >
+                            ✕
+                        </button>
+
+                        {/* Thumbnails a la izquierda */}
+                        {lightbox.images.length > 1 && (
+                            <div className="hidden md:flex flex-col gap-2 p-4 overflow-y-auto w-20 flex-shrink-0">
+                                {lightbox.images.map((img, idx) => (
+                                    <button
+                                        key={img.id || idx}
+                                        onClick={() => setLightbox({ ...lightbox, currentIndex: idx })}
+                                        className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === lightbox.currentIndex
+                                            ? 'border-blue-500 ring-2 ring-blue-300'
+                                            : 'border-white/30 hover:border-white'
+                                            }`}
+                                    >
+                                        <img
+                                            src={img.url}
+                                            alt=""
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Imagen Principal */}
+                        <div className="flex-1 flex items-center justify-center relative p-4">
+                            {/* Flecha Izquierda */}
+                            {lightbox.images.length > 1 && (
+                                <button
+                                    onClick={() => setLightbox({
+                                        ...lightbox,
+                                        currentIndex: lightbox.currentIndex === 0 ? lightbox.images.length - 1 : lightbox.currentIndex - 1
+                                    })}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-10"
+                                >
+                                    ‹
+                                </button>
+                            )}
+
+                            <img
+                                src={lightbox.images[lightbox.currentIndex]?.url}
+                                alt={lightbox.productName}
+                                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                            />
+
+                            {/* Flecha Derecha */}
+                            {lightbox.images.length > 1 && (
+                                <button
+                                    onClick={() => setLightbox({
+                                        ...lightbox,
+                                        currentIndex: lightbox.currentIndex === lightbox.images.length - 1 ? 0 : lightbox.currentIndex + 1
+                                    })}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-10"
+                                >
+                                    ›
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Nombre del producto */}
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-lg text-center">
+                            <p className="font-medium">{lightbox.productName}</p>
+                            {lightbox.images.length > 1 && (
+                                <p className="text-sm text-gray-300 mt-1">
+                                    {lightbox.currentIndex + 1} / {lightbox.images.length}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Thumbnails en móvil (horizontal abajo) */}
+                        {lightbox.images.length > 1 && (
+                            <div className="md:hidden absolute bottom-20 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto">
+                                {lightbox.images.map((img, idx) => (
+                                    <button
+                                        key={img.id || idx}
+                                        onClick={() => setLightbox({ ...lightbox, currentIndex: idx })}
+                                        className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === lightbox.currentIndex
+                                            ? 'border-blue-500'
+                                            : 'border-white/30'
+                                            }`}
+                                    >
+                                        <img src={img.url} alt="" className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </div>
@@ -435,21 +529,55 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
 };
 
 // Componente para fila de producto
-const ProductRow = ({ producto, formatCurrency, expandedSpecs, toggleSpecs }) => {
+const ProductRow = ({ producto, formatCurrency, expandedSpecs, toggleSpecs, onOpenGallery }) => {
+    const [loadingGallery, setLoadingGallery] = useState(false);
+
+    const handleImageClick = async () => {
+        if (!producto.imagen_url) return;
+
+        setLoadingGallery(true);
+        // Cargar galería del producto
+        const { data: gallery } = await galeriaApi.getByProducto(producto.id);
+
+        // Si tiene galería, usar esas imágenes, sino usar imagen_url
+        const images = gallery && gallery.length > 0
+            ? gallery
+            : [{ id: 'main', url: producto.imagen_url }];
+
+        onOpenGallery({
+            images,
+            currentIndex: 0,
+            productName: producto.nombre
+        });
+        setLoadingGallery(false);
+    };
+
     return (
         <tr className="border-b border-gray-200 hover:bg-blue-50 transition-colors">
             <td className="px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        {/* Thumbnail */}
+                        {/* Thumbnail - Clickeable */}
                         {producto.imagen_url ? (
-                            <img
-                                src={producto.imagen_url}
-                                alt={producto.nombre}
-                                className="w-14 h-14 object-cover rounded-lg border-2 border-gray-200"
-                            />
+                            <button
+                                onClick={handleImageClick}
+                                disabled={loadingGallery}
+                                className="w-14 h-14 rounded-lg border-2 border-gray-200 overflow-hidden hover:border-blue-400 hover:shadow-md transition-all cursor-pointer disabled:opacity-50 flex-shrink-0"
+                            >
+                                {loadingGallery ? (
+                                    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                                        <span className="animate-spin">⏳</span>
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={producto.imagen_url}
+                                        alt={producto.nombre}
+                                        className="w-full h-full object-cover"
+                                    />
+                                )}
+                            </button>
                         ) : (
-                            <div className="w-14 h-14 rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 flex items-center justify-center">
+                            <div className="w-14 h-14 rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 flex items-center justify-center flex-shrink-0">
                                 <span className="text-gray-400 text-2xl">📷</span>
                             </div>
                         )}
