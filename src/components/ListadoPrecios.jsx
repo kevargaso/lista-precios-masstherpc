@@ -459,8 +459,8 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                             </div>
                         )}
 
-                        {/* Imagen Principal */}
-                        <div className="flex-1 flex items-center justify-center relative p-4 md:px-12">
+                        {/* Ramen Principal */}
+                        <div className="flex-1 flex items-center justify-center relative p-0">
                             {/* Flecha Izquierda */}
                             {lightbox.images.length > 1 && (
                                 <button
@@ -468,7 +468,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                         ...lightbox,
                                         currentIndex: lightbox.currentIndex === 0 ? lightbox.images.length - 1 : lightbox.currentIndex - 1
                                     })}
-                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-10"
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/30 hover:bg-black/60 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-20 backdrop-blur-sm shadow-md"
                                 >
                                     ‹
                                 </button>
@@ -487,7 +487,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                         ...lightbox,
                                         currentIndex: lightbox.currentIndex === lightbox.images.length - 1 ? 0 : lightbox.currentIndex + 1
                                     })}
-                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-10"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/30 hover:bg-black/60 rounded-full flex items-center justify-center text-white text-2xl transition-colors z-20 backdrop-blur-sm shadow-md"
                                 >
                                     ›
                                 </button>
