@@ -1,16 +1,20 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import App from './App';
+import PublicApp from './PublicApp';
 import AdminPage from './components/admin/AdminPage';
 
 export default function Router() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<App />} />
+                {/* PÚBLICO - Solo lista de precios */}
+                <Route path="/" element={<PublicApp />} />
+
+                {/* ADMIN - Protegido con login */}
                 <Route path="/admin" element={<AdminPage />} />
                 <Route path="/admin/*" element={<AdminPage />} />
             </Routes>
         </BrowserRouter>
     );
 }
+
