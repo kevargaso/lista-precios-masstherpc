@@ -7,6 +7,10 @@ import ListadoPrecios from './components/ListadoPrecios';
 const PublicApp = () => {
     const TRM = 4150; // Actualizado
 
+    React.useEffect(() => {
+        document.title = "MasstherPC | Lista de Precios Oficial";
+    }, []);
+
     const formatCurrency = (val, currency = 'COP') => {
         if (currency === 'USD') return `$${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         return `$${Math.round(val).toLocaleString('es-CO')}`;
