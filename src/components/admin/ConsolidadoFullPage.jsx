@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { authApi } from '../../lib/supabase';
+import { authApi, isSupabaseConfigured } from '../../lib/supabase';
 import ConsolidadoFull from './ConsolidadoFull';
 
 export default function ConsolidadoFullPage() {
@@ -8,12 +8,16 @@ export default function ConsolidadoFullPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        checkAuth();
+        checkSession();
     }, []);
 
-    const checkAuth = async () => {
-        const { user: currentUser } = await authApi.getCurrentUser();
-        setUser(currentUser);
+    const checkSession = async () => {
+        if (!isSupabaseConfigured()) {
+            setLoading(false);
+            return;
+        }
+        const { data: session } = await authApi.getSession();
+        setUser(session?.user || null);
         setLoading(false);
     };
 
