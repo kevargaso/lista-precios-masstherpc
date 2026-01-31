@@ -8,7 +8,7 @@ const PublicApp = () => {
     const TRM = 4150; // Actualizado
 
     React.useEffect(() => {
-        document.title = "MasstherPC | Lista de Precios Oficial";
+        document.title = "MesstherPC | Lista de Precios Oficial";
     }, []);
 
     const formatCurrency = (val, currency = 'COP') => {

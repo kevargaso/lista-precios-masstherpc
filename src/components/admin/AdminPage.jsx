@@ -8,7 +8,7 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        document.title = "MasstherPC | Panel Admin";
+        document.title = "MesstherPC | Panel Admin";
         checkSession();
 
         // Escuchar cambios de autenticación

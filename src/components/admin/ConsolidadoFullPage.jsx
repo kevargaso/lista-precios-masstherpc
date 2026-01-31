@@ -8,7 +8,7 @@ export default function ConsolidadoFullPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        document.title = "MasstherPC | Consolidado Pedidos";
+        document.title = "MesstherPC | Consolidado Pedidos";
         checkSession();
     }, []);
 
