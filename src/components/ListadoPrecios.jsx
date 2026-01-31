@@ -285,7 +285,20 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                                     <td className="px-6 py-5">
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex items-center gap-3">
-                                                                <Target className="w-5 h-5 text-neon-orange group-hover:animate-neon-pulse" />
+                                                                {combo.imagen_url ? (
+                                                                    <img
+                                                                        src={combo.imagen_url}
+                                                                        alt={combo.nombre}
+                                                                        className="w-12 h-12 object-cover rounded-lg border border-neon-orange/30 cursor-pointer hover:border-neon-cyan transition-colors hover:scale-110"
+                                                                        onClick={() => setLightbox({
+                                                                            images: [combo.imagen_url],
+                                                                            currentIndex: 0,
+                                                                            productName: combo.nombre
+                                                                        })}
+                                                                    />
+                                                                ) : (
+                                                                    <Target className="w-5 h-5 text-neon-orange group-hover:animate-neon-pulse" />
+                                                                )}
                                                                 <span className="text-white font-semibold text-lg group-hover:text-neon-cyan transition-colors">
                                                                     {combo.nombre}
                                                                 </span>
