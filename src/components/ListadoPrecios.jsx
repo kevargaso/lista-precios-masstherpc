@@ -291,7 +291,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                                                         alt={combo.nombre}
                                                                         className="w-12 h-12 object-cover rounded-lg border border-neon-orange/30 cursor-pointer hover:border-neon-cyan transition-colors hover:scale-110"
                                                                         onClick={() => setLightbox({
-                                                                            images: [combo.imagen_url],
+                                                                            images: [{ url: combo.imagen_url, id: combo.id }],
                                                                             currentIndex: 0,
                                                                             productName: combo.nombre
                                                                         })}
