@@ -517,7 +517,7 @@ export default function CombosAdmin({ onUpdate }) {
                                                                 <option value="">Seleccionar...</option>
                                                                 {getProductosByCategoria(item.categoria_id).map(prod => (
                                                                     <option key={prod.id} value={prod.id}>
-                                                                        {prod.nombre} - {formatCurrency(prod.precio)}
+                                                                        {prod.nombre}{prod.etiqueta ? ` [${prod.etiqueta}]` : ''} - {formatCurrency(prod.precio)}
                                                                     </option>
                                                                 ))}
                                                             </select>

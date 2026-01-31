@@ -1,7 +1,7 @@
 // Componente DINÁMICO para mostrar el listado de precios desde Supabase
 // Diseño GAMER profesional con tema oscuro, neón y animaciones premium
 import React, { useState, useEffect } from 'react';
-import { productosApi, categoriasApi, galeriaApi, isSupabaseConfigured } from '../lib/supabase';
+import { productosApi, categoriasApi, galeriaApi, combosApi, isSupabaseConfigured } from '../lib/supabase';
 import ProductLightbox from './ui/ProductLightbox';
 import {
     Package, Flame, Sparkles, Clock, Zap, CircleCheck, XCircle,
@@ -13,6 +13,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
     // Estado para datos de Supabase
     const [categorias, setCategorias] = useState([]);
     const [productos, setProductos] = useState([]);
+    const [combos, setCombos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -32,16 +33,19 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
             }
 
             try {
-                const [categoriasRes, productosRes] = await Promise.all([
+                const [categoriasRes, productosRes, combosRes] = await Promise.all([
                     categoriasApi.getAll(),
-                    productosApi.getAll()
+                    productosApi.getAll(),
+                    combosApi.getActive()
                 ]);
 
                 if (categoriasRes.error) throw categoriasRes.error;
                 if (productosRes.error) throw productosRes.error;
+                if (combosRes.error) throw combosRes.error;
 
                 setCategorias(categoriasRes.data || []);
                 setProductos(productosRes.data || []);
+                setCombos(combosRes.data || []);
             } catch (err) {
                 console.error('Error cargando datos:', err);
                 setError(err.message);
@@ -90,8 +94,7 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
         return acc;
     }, {});
 
-    // Obtener combos
-    const combos = productos.filter(p => p.es_combo);
+    // Los combos ahora vienen del estado (cargados desde combosApi)
 
     // Mapeo de iconos por categoría
     const getCategoryIcon = (nombre) => {
@@ -286,9 +289,11 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                                                 <span className="text-white font-semibold text-lg group-hover:text-neon-cyan transition-colors">
                                                                     {combo.nombre}
                                                                 </span>
-                                                                <span className="badge-hot text-xs">HOT</span>
+                                                                {combo.descuento_total > 0 && (
+                                                                    <span className="badge-hot text-xs">-{formatCurrency(combo.descuento_total)}</span>
+                                                                )}
                                                             </div>
-                                                            {combo.especificaciones && combo.especificaciones.length > 0 && (
+                                                            {combo.items && combo.items.length > 0 && (
                                                                 <button
                                                                     onClick={() => toggleSpecs(combo.id)}
                                                                     className="btn-gamer text-sm flex items-center gap-2 py-2 px-3"
@@ -298,17 +303,25 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                                                 </button>
                                                             )}
                                                         </div>
-                                                        {expandedSpecs[combo.id] && combo.especificaciones && (
+                                                        {expandedSpecs[combo.id] && combo.items && (
                                                             <div className="mt-4 glass-dark p-5 rounded-xl border border-neon-cyan/30 animate-slide-up">
                                                                 <h4 className="font-gaming text-neon-cyan mb-3 flex items-center gap-2">
                                                                     <Package className="w-5 h-5" />
                                                                     INCLUYE:
                                                                 </h4>
                                                                 <div className="space-y-2">
-                                                                    {combo.especificaciones.map((spec, i) => (
-                                                                        <div key={i} className="bg-gamer-surface/50 p-3 rounded-lg border border-gamer-border">
-                                                                            <span className="text-neon-violet font-semibold">{spec.label}:</span>
-                                                                            <span className="text-gamer-secondary ml-2">{spec.value}</span>
+                                                                    {combo.items.map((item, i) => (
+                                                                        <div key={i} className="bg-gamer-surface/50 p-3 rounded-lg border border-gamer-border flex justify-between items-center">
+                                                                            <div>
+                                                                                <span className="text-neon-violet font-semibold">{item.categoria?.icono} {item.categoria?.nombre}:</span>
+                                                                                <span className="text-gamer-secondary ml-2">{item.producto?.nombre}</span>
+                                                                            </div>
+                                                                            <div className="text-right">
+                                                                                {item.descuento > 0 && (
+                                                                                    <span className="text-gray-500 line-through text-sm mr-2">{formatCurrency(item.precio_original)}</span>
+                                                                                )}
+                                                                                <span className="text-neon-green font-semibold">{formatCurrency(item.precio_final)}</span>
+                                                                            </div>
                                                                         </div>
                                                                     ))}
                                                                 </div>
@@ -316,11 +329,18 @@ const ListadoPrecios = ({ formatCurrency, TRM }) => {
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-5 text-center align-top">
-                                                        <StockBadge stock={combo.stock} />
+                                                        <div className="text-sm text-neon-cyan">
+                                                            {combo.items?.length || 0} items
+                                                        </div>
                                                     </td>
                                                     <td className="px-6 py-5 text-right align-top">
+                                                        {combo.descuento_total > 0 && (
+                                                            <div className="text-sm text-gray-500 line-through">
+                                                                {formatCurrency(combo.precio_total)}
+                                                            </div>
+                                                        )}
                                                         <div className="font-gaming text-2xl text-neon-green glow-text-cyan">
-                                                            {formatCurrency(combo.precio)}
+                                                            {formatCurrency(combo.precio_final)}
                                                         </div>
                                                     </td>
                                                 </tr>
