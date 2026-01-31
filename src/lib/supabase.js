@@ -405,3 +405,184 @@ export const galeriaApi = {
     }
 };
 
+// Funciones de Combos
+export const combosApi = {
+    async getAll() {
+        if (!supabase) return { data: [], error: null };
+
+        const { data, error } = await supabase
+            .from('combos')
+            .select(`
+                *,
+                items:combo_items(
+                    *,
+                    producto:productos(id, nombre, imagen_url, precio),
+                    categoria:categorias(id, nombre, icono)
+                )
+            `)
+            .order('created_at', { ascending: false });
+
+        return { data, error };
+    },
+
+    async getActive() {
+        if (!supabase) return { data: [], error: null };
+
+        const { data, error } = await supabase
+            .from('combos')
+            .select(`
+                *,
+                items:combo_items(
+                    *,
+                    producto:productos(id, nombre, imagen_url, precio),
+                    categoria:categorias(id, nombre, icono)
+                )
+            `)
+            .eq('activo', true)
+            .order('created_at', { ascending: false });
+
+        return { data, error };
+    },
+
+    async getById(id) {
+        if (!supabase) return { data: null, error: null };
+
+        const { data, error } = await supabase
+            .from('combos')
+            .select(`
+                *,
+                items:combo_items(
+                    *,
+                    producto:productos(id, nombre, imagen_url, precio),
+                    categoria:categorias(id, nombre, icono)
+                )
+            `)
+            .eq('id', id)
+            .single();
+
+        return { data, error };
+    },
+
+    async create(comboData) {
+        if (!supabase) return { data: null, error: 'No configurado' };
+
+        const { data, error } = await supabase
+            .from('combos')
+            .insert(comboData)
+            .select()
+            .single();
+
+        return { data, error };
+    },
+
+    async update(id, updates) {
+        if (!supabase) return { data: null, error: 'No configurado' };
+
+        const { data, error } = await supabase
+            .from('combos')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+        return { data, error };
+    },
+
+    async delete(id) {
+        if (!supabase) return { error: 'No configurado' };
+
+        const { error } = await supabase
+            .from('combos')
+            .delete()
+            .eq('id', id);
+
+        return { error };
+    }
+};
+
+// Funciones de Combo Items
+export const comboItemsApi = {
+    async addItem(itemData) {
+        if (!supabase) return { data: null, error: 'No configurado' };
+
+        const { data, error } = await supabase
+            .from('combo_items')
+            .insert(itemData)
+            .select(`
+                *,
+                producto:productos(id, nombre, imagen_url, precio),
+                categoria:categorias(id, nombre, icono)
+            `)
+            .single();
+
+        return { data, error };
+    },
+
+    async updateItem(id, updates) {
+        if (!supabase) return { data: null, error: 'No configurado' };
+
+        const { data, error } = await supabase
+            .from('combo_items')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+        return { data, error };
+    },
+
+    async removeItem(id) {
+        if (!supabase) return { error: 'No configurado' };
+
+        const { error } = await supabase
+            .from('combo_items')
+            .delete()
+            .eq('id', id);
+
+        return { error };
+    },
+
+    async getByCombo(comboId) {
+        if (!supabase) return { data: [], error: null };
+
+        const { data, error } = await supabase
+            .from('combo_items')
+            .select(`
+                *,
+                producto:productos(id, nombre, imagen_url, precio),
+                categoria:categorias(id, nombre, icono)
+            `)
+            .eq('combo_id', comboId)
+            .order('orden', { ascending: true });
+
+        return { data, error };
+    },
+
+    // Reemplazar todos los items de un combo
+    async replaceItems(comboId, items) {
+        if (!supabase) return { error: 'No configurado' };
+
+        // Primero eliminar items existentes
+        await supabase
+            .from('combo_items')
+            .delete()
+            .eq('combo_id', comboId);
+
+        // Luego insertar nuevos
+        if (items.length > 0) {
+            const itemsWithComboId = items.map((item, index) => ({
+                ...item,
+                combo_id: comboId,
+                orden: index
+            }));
+
+            const { error } = await supabase
+                .from('combo_items')
+                .insert(itemsWithComboId);
+
+            return { error };
+        }
+
+        return { error: null };
+    }
+};

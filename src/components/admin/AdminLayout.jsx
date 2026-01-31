@@ -3,6 +3,7 @@ import { authApi, productosApi, categoriasApi } from '../../lib/supabase';
 import ProductosAdmin from './ProductosAdmin';
 import CategoriasAdmin from './CategoriasAdmin';
 import ConsolidadoAdmin from './ConsolidadoAdmin';
+import CombosAdmin from './CombosAdmin';
 
 export default function AdminLayout({ user, onLogout }) {
     const [activeTab, setActiveTab] = useState('productos');
@@ -39,6 +40,7 @@ export default function AdminLayout({ user, onLogout }) {
     const tabs = [
         { id: 'dashboard', label: 'Dashboard', icon: '📊' },
         { id: 'productos', label: 'Productos', icon: '📦' },
+        { id: 'combos', label: 'Combos', icon: '🎯' },
         { id: 'categorias', label: 'Categorías', icon: '🏷️' },
         { id: 'consolidado', label: 'Consolidado', icon: '📋' }
     ];
@@ -181,6 +183,11 @@ export default function AdminLayout({ user, onLogout }) {
                 {/* Consolidado Tab */}
                 {activeTab === 'consolidado' && (
                     <ConsolidadoAdmin />
+                )}
+
+                {/* Combos Tab */}
+                {activeTab === 'combos' && (
+                    <CombosAdmin onUpdate={loadStats} />
                 )}
             </div>
         </div>
