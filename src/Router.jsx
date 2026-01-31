@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './HomePage';
 import PublicApp from './PublicApp';
 import AdminPage from './components/admin/AdminPage';
+import ConsolidadoFullPage from './components/admin/ConsolidadoFullPage';
 
 export default function Router() {
     return (
@@ -17,7 +18,11 @@ export default function Router() {
                 {/* ADMIN - Protegido con login */}
                 <Route path="/admin" element={<AdminPage />} />
                 <Route path="/admin/*" element={<AdminPage />} />
+
+                {/* CONSOLIDADO FULL - Protegido */}
+                <Route path="/admin/consolidado-full" element={<ConsolidadoFullPage />} />
             </Routes>
         </BrowserRouter>
     );
 }
+
