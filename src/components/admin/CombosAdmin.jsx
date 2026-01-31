@@ -420,11 +420,21 @@ export default function CombosAdmin({ onUpdate }) {
                                         </label>
                                         <div className="flex items-center gap-4">
                                             {formData.imagen_url && (
-                                                <img
-                                                    src={formData.imagen_url}
-                                                    alt="Portada"
-                                                    className="w-24 h-24 object-cover rounded-lg border"
-                                                />
+                                                <div className="relative group">
+                                                    <img
+                                                        src={formData.imagen_url}
+                                                        alt="Portada"
+                                                        className="w-24 h-24 object-cover rounded-lg border"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, imagen_url: '' })}
+                                                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-md"
+                                                        title="Eliminar imagen"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
                                             )}
                                             <input
                                                 type="file"
